@@ -1,0 +1,48 @@
+//Esse robô se movimentará para o centro do mapa e depois para uma posição aleatória, perseguirá e atacará o jogador caso se aproxime
+tree("Root")
+	parallel
+		//Executa constantemente as árvores "Wander", "Dead" e "Follow"
+		repeat mute tree("Wander")
+		repeat mute tree("Dead")
+		repeat mute tree("Follow")
+
+tree("Wander")
+	//Executa sequência caso não esteja próximo do jogador
+	while NotCloseToPlayer
+		sequence
+			//Seleciona o centro do mapa como o destino do robô
+			PickDestination(0,0)
+			//Aguarda o robô se mover para o destino
+			MoveToDestination
+			//Espera um tempo específico
+			Wait(4.0)
+			//Seleciona uma posição aleatória do mapa como destino
+			PickRandomDestination
+			//Aguarda o robô se mover para o destino
+			MoveToDestination
+			//Espera um tempo específico
+			Wait(4.0)
+
+tree("Follow")
+	//Executa árvore caso esteja proximo do jogador
+	while CloseToPlayer
+		parallel
+			//Seleciona o jogador como alvo
+			TargetAndFollowPlayer
+			//Olha para o alvo
+			LookAtTarget
+			//Executa constantemente a árvore de ataque
+			repeat mute tree("Attack")
+
+tree("Attack")
+	sequence
+			//Espera um tempo específico
+			Wait(1.5)
+			//Executa um disparo
+			Fire
+
+//Árvore que verifica constantemente se a vida desse objeto é menor que um valor específico, para destruí-lo se for o caso			
+tree("Dead")
+	sequence
+		IsHealthLessThan(0.1)
+		Explode

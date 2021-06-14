@@ -1,0 +1,67 @@
+//Esse robô patrulhará as extremidades do mapa, mirará e atirará no jogador caso se aproxime, parando de se mover
+tree("Root")
+	parallel
+		//Executa constantemente as árvores "Patrol", "LookForPlayer" e "Dead"
+		repeat mute tree("Patrol")
+		repeat mute tree("LookForPlayer")
+		repeat mute tree("Dead")
+
+tree("Patrol")
+	sequence
+		//Seleciona uma extremidade do mapa e a define como destino
+		PickDestination(-100,100)
+		//Aguarda o robô terminar de se mover ao destino
+		MoveToDestination
+		//Espera um tempo específico
+		Wait(5.0)
+		//Seleciona uma segunda extremidade do mapa e a define como destino
+		PickDestination(-100,-100)
+		//Aguarda o robô terminar de se mover ao destino
+		MoveToDestination
+		//Espera um tempo específico
+		Wait(5.0)
+		//Seleciona uma terceira extremidade do mapa e a define como destino
+		PickDestination(100,-100)
+		//Aguarda o robô terminar de se mover ao destino
+		MoveToDestination
+		//Espera um tempo específico
+		Wait(5.0)
+		//Seleciona uma quarta extremidade do mapa e a define como destino
+		PickDestination(100,100)
+		//Aguarda o robô terminar de se mover ao destino
+		MoveToDestination
+		//Espera um tempo específico
+		Wait(5.0)
+
+tree("LookForPlayer")
+	parallel
+		//Executa constantemente as árvores "Attack" e "ResumeAgent"
+		repeat mute tree("Attack")
+		repeat mute tree("ResumeAgent")
+
+tree("Attack")
+	//Executa sequência enquanto estiver próximo do jogador
+	while CloseToPlayer
+		sequence
+			//Define que o agente NavMesh está parado
+			StopAgent
+			//Define o jogador como alvo
+			TargetPlayer
+			//Olha para o alvo
+			LookAtTarget
+			//Executa um disparo
+			Fire
+			//Espera um tempo específico
+			Wait(1.0)
+
+tree("ResumeAgent")
+	//Mantém o agente NavMesh ativo enquanto não estiver próximo do jogador
+	while NotCloseToPlayer
+		ResumeAgent
+
+//Árvore que verifica constantemente se a vida desse objeto é menor que um valor específico, para destruí-lo se for o caso
+tree("Dead")
+	sequence
+		IsHealthLessThan(0.1)
+		Explode
+

@@ -1,0 +1,46 @@
+//Esse robô permanece parado observando posições aleatórias 2 vezes, depois disso se move pelo mapa
+//Ataca caso detecte o jogador em sua visão
+tree("Root")
+	parallel
+		//Executa paralelamente as árvores "Look", "Dead" e "Attack"
+		repeat mute tree("Look")
+		repeat mute tree("Dead")	
+		repeat mute tree("Attack")
+
+tree("Look")
+		//Executa sequência enquanto o objeto não enxergar o jogador
+		while NotSeePlayer
+			sequence
+				//Gera uma posição aleatória no mapa, mas sem se mover para ela
+				RandomDestinationOnly
+				//Observa a posição sorteada
+				LookAtTarget
+				//Espera um tempo específico
+				Wait(1.5)
+				//Executa o mesmo ciclo das linhas anteriores
+				RandomDestinationOnly
+				LookAtTarget
+				Wait(1.5)
+				//Gera uma posição aleatória e se move até ela
+				PickRandomDestination
+				//Espera um tempo específico e reinicia a sequência (mesmo que a movimentação da linha anterior não esteja concluída)
+				Wait(3.0)
+
+//Árvore que verifica constantemente se a vida desse objeto é menor que um valor específico, para destruí-lo se for o caso
+tree("Dead")
+	sequence
+		IsHealthLessThan(0.1)
+		Explode
+
+tree("Attack")
+		//Executa sequência enquanto o objeto enxergar o jogador
+		while SeePlayer	
+			sequence
+				//Define o jogador como o alvo desse objeto
+				TargetPlayer
+				//Olha para o alvo
+				LookAtTarget
+				//Espera um tempo específico
+				Wait(0.8)
+				//Executa um disparo
+				Fire

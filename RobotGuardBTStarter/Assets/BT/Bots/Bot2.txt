@@ -1,0 +1,31 @@
+//Esse robô irá perseguir o jogador constantemente, abrindo fogo contra ele ao se aproximar
+tree("Root")
+	parallel
+		//Executa constantemente as árvores "Follow" e "Dead"
+		repeat mute tree("Follow")
+		repeat mute tree("Dead")
+
+tree("Follow")
+			parallel
+				//Define o jogador como algo e o persegue
+				TargetAndFollowPlayer
+				//Executa constantemente a árvore de ataque
+				repeat mute tree("Attack")
+
+tree("Attack")
+		//Executa sequência caso o robô esteja próximo ao jogador
+		while CloseToPlayer
+			sequence
+				//Olha para o alvo
+				LookAtTarget
+				//Espera um tempo específico
+				Wait(1.5)
+				//Executa um disparo
+				Fire
+
+//Árvore que verifica constantemente se a vida desse objeto é menor que um valor específico, para destruí-lo se for o caso
+tree("Dead")
+	sequence
+		IsHealthLessThan(0.1)
+		Explode
+				

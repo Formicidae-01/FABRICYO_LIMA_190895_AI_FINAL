@@ -1,0 +1,52 @@
+//Esse robô perseguirá o jogador mas não se aproximará dele, atirará contra o jogador se ele começar a se aproximar mas fugirá caso a distância seja muito baixa
+tree("Root")
+	parallel
+		//Executa constantemente as árvores "Move" e "Dead"
+		repeat mute tree("Move")
+		repeat mute tree("Dead")
+
+tree("Move")
+	parallel
+		//Executa constantemente as árvores "Retreat" e "Follow"
+		repeat mute tree("Retreat")
+		repeat mute tree("Follow")
+
+tree("Follow")
+	//Executa árvore caso o objeto não esteja perto do jogador
+	while NotCloseToPlayer
+		parallel
+			//Define a distância para parar de se mover como um valor específico
+			SetStoppingDistance(120.0)
+			//Define o jogador como algo e o persegue
+			TargetAndFollowPlayer
+			//Executa constantemente a árvore de Ataque
+			repeat mute tree("Attack")		
+
+tree("Retreat")
+	//Executa árvore caso o objeto esteja próximo do jogador
+	while CloseToPlayer
+		parallel
+			//Foge do jogador
+			FleeFromPlayer
+			//Define a distância para parar de se mover como um valor específico
+			//É menor do que o valor para parar quando o robô persegue o jogador, para que não pare longe do destino
+			SetStoppingDistance(30.0)
+
+tree("Attack")
+	//Executa árvore caso esse robô enxergue o jogador
+	while SeePlayer	
+			sequence
+				//Define o jogador como alvo
+				TargetPlayer
+				//Olha para o jogador
+				LookAtTarget
+				//Espera um tempo específico
+				Wait(2.0)
+				//Executa um disparo
+				Fire
+
+//Árvore que verifica constantemente se a vida desse objeto é menor que um valor específico, para destruí-lo se for o caso
+tree("Dead")
+	sequence
+		IsHealthLessThan(0.1)
+		Explode
